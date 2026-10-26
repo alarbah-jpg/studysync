@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-6">
+<h2>{{ "Edit" if task else "New" }} task</h2>
+<form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="mb-3"><label class="form-label">Title</label>
+    <input name="title" class="form-control" value="{{ task.title if task else '' }}" required></div>
+  <div class="mb-3"><label class="form-label">Description</label>
+    <textarea name="description" class="form-control" rows="3">{{ task.description if task else '' }}</textarea></div>
+  <div class="mb-3"><label class="form-label">Due date</label>
+    <input type="date" name="due_date" class="form-control"
+           value="{{ task.due_date.isoformat() if task and task.due_date else '' }}"></div>
+  <div class="mb-3"><label class="form-label">Assign to</label>
+    <select name="assignee_id" class="form-select">
+      <option value="">Unassigned</option>
+      {% for m in group.memberships %}
+        <option value="{{ m.user.id }}" {{ 'selected' if task and task.assignee_id == m.user.id }}>{{ m.user.name }}</option>
+      {% endfor %}
+    </select></div>
+  <button class="btn btn-primary">Save</button>
+  <a class="btn btn-link" href="{{ url_for('dashboard.group_dashboard', group_id=group.id) }}">Cancel</a>
+</form></div></div>
+{% endblock %}

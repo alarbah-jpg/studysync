@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-5">
+{% if mode == "create" %}
+<h2>Create group</h2>
+<form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="mb-3"><label class="form-label">Group name</label><input name="name" class="form-control" required></div>
+  <button class="btn btn-primary">Create</button>
+</form>
+{% else %}
+<h2>Join group</h2>
+<form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="mb-3"><label class="form-label">Join code</label><input name="code" class="form-control" required></div>
+  <button class="btn btn-primary">Join</button>
+</form>
+{% endif %}
+</div></div>
+{% endblock %}

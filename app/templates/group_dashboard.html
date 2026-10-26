@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}{{ group.name }} - StudySync{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-3">
+  <div><h2>{{ group.name }}</h2>
+    <span class="text-muted">Join code: <code>{{ group.join_code }}</code></span></div>
+  <div>
+    <a class="btn btn-primary" href="{{ url_for('study_sessions.create', group_id=group.id) }}">+ Session</a>
+    <a class="btn btn-primary" href="{{ url_for('tasks.create', group_id=group.id) }}">+ Task</a>
+  </div>
+</div>
+
+<div class="card mb-4"><div class="card-body">
+  <h5>Overall progress: {{ percent }}% <small class="text-muted">({{ total }} tasks)</small></h5>
+  <div class="progress"><div class="progress-bar" style="width: {{ percent }}%">{{ percent }}%</div></div>
+</div></div>
+
+<div class="card mb-4"><div class="card-header">Upcoming sessions</div>
+<ul class="list-group list-group-flush">
+{% for s in upcoming %}
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <div><strong>{{ s.title }}</strong> <span class="text-muted">{{ s.topic }}</span><br>
+      <small>{{ s.start_time.strftime('%a %b %d, %I:%M %p') }}{% if s.location %} at {{ s.location }}{% endif %}</small></div>
+    <div class="d-flex gap-1">
+      <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('study_sessions.edit', session_id=s.id) }}">Edit</a>
+      <form method="post" action="{{ url_for('study_sessions.delete', session_id=s.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-sm btn-outline-danger">Delete</button></form>
+    </div>
+  </li>
+{% else %}
+  <li class="list-group-item text-muted">No upcoming sessions.</li>
+{% endfor %}
+</ul></div>
+
+<div class="row">
+{% for status in statuses %}
+  <div class="col-md-4 mb-3"><div class="card h-100">
+    <div class="card-header">{{ status }} ({{ by_status[status]|length }})</div>
+    <div class="card-body">
+    {% for t in by_status[status] %}
+      <div class="border rounded p-2 mb-2 bg-white">
+        <strong>{{ t.title }}</strong><br>
+        <small class="text-muted">{{ t.assignee.name if t.assignee else 'Unassigned' }}{% if t.due_date %} | due {{ t.due_date }}{% endif %}</small>
+        <div class="d-flex gap-1 mt-2 flex-wrap">
+          {% if me.is_admin or t.assignee_id == current_user.id %}
+          <form method="post" action="{{ url_for('tasks.set_status', task_id=t.id) }}" class="d-flex gap-1">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <select name="status" class="form-select form-select-sm">
+              {% for s in statuses %}<option {{ 'selected' if s == t.status }}>{{ s }}</option>{% endfor %}
+            </select>
+            <button class="btn btn-sm btn-outline-primary">Set</button>
+          </form>
+          {% endif %}
+          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('tasks.edit', task_id=t.id) }}">Edit</a>
+          <form method="post" action="{{ url_for('tasks.delete', task_id=t.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-outline-danger">Delete</button></form>
+        </div>
+      </div>
+    {% else %}
+      <p class="text-muted mb-0">Nothing here.</p>
+    {% endfor %}
+    </div></div></div>
+{% endfor %}
+</div>
+
+<div class="card mt-2"><div class="card-header">Members</div>
+<ul class="list-group list-group-flush">
+{% for m in group.memberships %}
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <span>{{ m.user.name }} <span class="badge bg-secondary">{{ m.role }}</span></span>
+    {% if me.is_admin and m.user_id != current_user.id %}
+    <form method="post" action="{{ url_for('groups.remove_member', group_id=group.id, user_id=m.user_id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="btn btn-sm btn-outline-danger">Remove</button></form>
+    {% endif %}
+  </li>
+{% endfor %}
+</ul></div>
+
+{% if me.is_admin %}
+<form method="post" action="{{ url_for('groups.delete', group_id=group.id) }}" class="mt-4"
+      onsubmit="return confirm('Delete this group and all its data?');">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <button class="btn btn-danger">Delete group</button>
+</form>
+{% endif %}
+{% endblock %}

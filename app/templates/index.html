@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>My study groups</h2>
+  <div>
+    <a class="btn btn-primary" href="{{ url_for('groups.create') }}">Create group</a>
+    <a class="btn btn-outline-primary" href="{{ url_for('groups.join') }}">Join with code</a>
+  </div>
+</div>
+{% if not memberships %}
+  <p class="text-muted">You are not in any group yet. Create one or join with a code.</p>
+{% endif %}
+<div class="list-group">
+{% for m in memberships %}
+  <a class="list-group-item list-group-item-action d-flex justify-content-between"
+     href="{{ url_for('dashboard.group_dashboard', group_id=m.group.id) }}">
+    <span>{{ m.group.name }}</span><span class="badge bg-secondary">{{ m.role }}</span>
+  </a>
+{% endfor %}
+</div>
+{% endblock %}
