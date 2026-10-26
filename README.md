@@ -59,4 +59,4 @@ pytest --cov=app --cov-report=term-missing
 | FR9 | app/helpers.py | tests/test_access.py |
 
 ## Team
-[Member 1], [Member 2]
+Mohamed Alarbah, Mohamed Abdullah
