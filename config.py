@@ -3,9 +3,11 @@ import os
 
 def _database_url():
     url = os.environ.get("DATABASE_URL", "sqlite:///studysync.db")
-    # Some hosts give "postgres://", but SQLAlchemy needs "postgresql://"
+    # Force the psycopg2 driver (the one listed in requirements.txt)
     if url.startswith("postgres://"):
-        url = url.replace("postgres://", "postgresql://", 1)
+        url = url.replace("postgres://", "postgresql+psycopg2://", 1)
+    elif url.startswith("postgresql://"):
+        url = url.replace("postgresql://", "postgresql+psycopg2://", 1)
     return url
 
 
