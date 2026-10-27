@@ -2,6 +2,10 @@
 
 A Flask web app where student groups schedule study sessions, assign tasks, and track progress on a shared dashboard.
 
+**Live demo:** https://studysync-tkty.onrender.com
+(Free hosting: the first page load after inactivity can take about a minute.)
+
+**Production database:** Neon Postgres, set through the `DATABASE_URL` environment variable. Local development uses SQLite by default.
 ## Features (must-have, implemented)
 Registration/login, group create/join by code, study session CRUD, task CRUD with assignment, status tracking (To Do / In Progress / Done), group dashboard with progress, and role-based access control.
 
