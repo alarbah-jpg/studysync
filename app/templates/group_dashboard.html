@@ -23,7 +23,8 @@
       <small>{{ s.start_time.strftime('%a %b %d, %I:%M %p') }}{% if s.location %} at {{ s.location }}{% endif %}</small></div>
     <div class="d-flex gap-1">
       <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('study_sessions.edit', session_id=s.id) }}">Edit</a>
-      <form method="post" action="{{ url_for('study_sessions.delete', session_id=s.id) }}">
+            <form method="post" action="{{ url_for('study_sessions.delete', session_id=s.id) }}"
+            onsubmit="return confirm('Delete this session?');">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button class="btn btn-sm btn-outline-danger">Delete</button></form>
     </div>
@@ -53,7 +54,8 @@
           </form>
           {% endif %}
           <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('tasks.edit', task_id=t.id) }}">Edit</a>
-          <form method="post" action="{{ url_for('tasks.delete', task_id=t.id) }}">
+                    <form method="post" action="{{ url_for('tasks.delete', task_id=t.id) }}"
+                onsubmit="return confirm('Delete this task?');">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button class="btn btn-sm btn-outline-danger">Delete</button></form>
         </div>
